@@ -54,6 +54,16 @@ const Portfolio = () => {
     document.body.removeChild(link);
   };
 
+  // Certificate download function
+  const downloadCertificate = (certificateTitle, pdfPath) => {
+    const link = document.createElement("a");
+    link.href = pdfPath;
+    link.download = `${certificateTitle.replace(/\s+/g, "_")}_Certificate.pdf`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // Scroll spy effect to update active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
@@ -282,7 +292,8 @@ const Portfolio = () => {
         "REST APIs",
         "POSTMAN",
       ],
-      image: "/images/MERN.png", // Add your certificate image
+      image: "/images/MERN.png",
+      pdfPath: "/certificates/MERN.pdf", // Add your certificate image
     },
     {
       title: "Android App Development",
@@ -291,7 +302,8 @@ const Portfolio = () => {
       description:
         "Advanced training in Android app development using Kotlin and Java",
       skills: ["Kotlin", "Java", "Android Studio", "Firebase", "UI/UX", "XML"],
-      image: "/images/Android.png", // Add your certificate image
+      image: "/images/Android.png",
+      pdfPath: "/certificates/Android.pdf", // Add your certificate image
     },
   ];
 
@@ -623,8 +635,10 @@ const Portfolio = () => {
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                  {certificate.verifyLink && (
-                    <div className="absolute top-4 right-4">
+
+                  {/* Top Right Buttons */}
+                  <div className="absolute top-4 right-4 flex space-x-2">
+                    {certificate.verifyLink && (
                       <a
                         href={certificate.verifyLink}
                         target="_blank"
@@ -633,8 +647,23 @@ const Portfolio = () => {
                       >
                         Verify
                       </a>
-                    </div>
-                  )}
+                    )}
+
+                    {/* Download Button */}
+                    <button
+                      onClick={() =>
+                        downloadCertificate(
+                          certificate.title,
+                          certificate.pdfPath
+                        )
+                      }
+                      className="p-2 bg-purple-500/20 backdrop-blur-sm rounded-full text-purple-400 hover:text-purple-300 transition-colors border border-purple-400/30"
+                      title="Download Certificate"
+                    >
+                      <Download className="w-4 h-4" />
+                    </button>
+                  </div>
+
                   <div className="absolute bottom-4 left-4">
                     <span className="px-3 py-1 bg-purple-500/20 backdrop-blur-sm rounded-full text-purple-300 text-xs border border-purple-400/30">
                       {certificate.date}
@@ -644,16 +673,18 @@ const Portfolio = () => {
 
                 {/* Certificate Content */}
                 <div className="p-4 md:p-6">
-                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-cyan-400">
-                    {certificate.title}
-                  </h3>
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg md:text-xl font-semibold text-cyan-400 flex-1">
+                      {certificate.title}
+                    </h3>
+                  </div>
                   <p className="text-purple-300 text-sm mb-3 font-medium">
                     {certificate.issuer}
                   </p>
                   <p className="text-gray-300 mb-4 text-sm">
                     {certificate.description}
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-2 mb-4">
                     {certificate.skills.map((skill) => (
                       <span
                         key={skill}
@@ -662,6 +693,22 @@ const Portfolio = () => {
                         {skill}
                       </span>
                     ))}
+                  </div>
+
+                  {/* Bottom Download Button for Mobile */}
+                  <div className="flex justify-center md:hidden">
+                    <button
+                      onClick={() =>
+                        downloadCertificate(
+                          certificate.title,
+                          certificate.pdfPath
+                        )
+                      }
+                      className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-cyan-500 rounded-full hover:from-purple-400 hover:to-cyan-400 transition-all duration-300 text-sm"
+                    >
+                      <Download className="w-4 h-4" />
+                      <span>Download Certificate</span>
+                    </button>
                   </div>
                 </div>
               </div>
