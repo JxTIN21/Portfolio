@@ -11,11 +11,14 @@ import {
   Server,
   Layers,
   Download,
+  X,
+  Menu,
 } from "lucide-react";
 
 const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -37,6 +40,7 @@ const Portfolio = () => {
         behavior: "smooth",
       });
       setActiveSection(sectionId);
+      setIsMobileMenuOpen(false); // Close mobile menu after navigation
     }
   };
 
@@ -254,6 +258,43 @@ const Portfolio = () => {
     },
   ];
 
+  const navigationItems = [
+    { name: "Home", id: "home" },
+    { name: "About", id: "about" },
+    { name: "Skills", id: "skills" },
+    { name: "Projects", id: "projects" },
+    { name: "Certificates", id: "certificates" },
+    { name: "Contact", id: "contact" },
+  ];
+
+  const certificates = [
+    {
+      title: "MERN Stack Development",
+      issuer: "ShapeMySkill by DUCAT", // Replace with actual institute
+      date: "2024", // Replace with actual date
+      description:
+        "Comprehensive training in MongoDB, Express.js, React.js, and Node.js development",
+      skills: [
+        "MongoDB",
+        "Express.js",
+        "React.js",
+        "Node.js",
+        "REST APIs",
+        "POSTMAN",
+      ],
+      image: "/images/MERN.png", // Add your certificate image
+    },
+    {
+      title: "Android App Development",
+      issuer: "Internshala Training", // Replace with actual institute
+      date: "2023", // Replace with actual date
+      description:
+        "Advanced training in Android app development using Kotlin and Java",
+      skills: ["Kotlin", "Java", "Android Studio", "Firebase", "UI/UX", "XML"],
+      image: "/images/Android.png", // Add your certificate image
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden relative">
       {/* Animated Background Pattern */}
@@ -287,13 +328,7 @@ const Portfolio = () => {
 
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-8">
-              {[
-                { name: "Home", id: "home" },
-                { name: "About", id: "about" },
-                { name: "Skills", id: "skills" },
-                { name: "Projects", id: "projects" },
-                { name: "Contact", id: "contact" },
-              ].map((item) => (
+              {navigationItems.map((item) => (
                 <button
                   key={item.id}
                   onClick={() => scrollToSection(item.id)}
@@ -315,30 +350,46 @@ const Portfolio = () => {
 
             {/* Mobile Menu Button */}
             <div className="md:hidden">
-              <button className="text-cyan-400 hover:text-cyan-300 transition-colors">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="text-cyan-400 hover:text-cyan-300 transition-colors p-2"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="w-6 h-6" />
+                ) : (
+                  <Menu className="w-6 h-6" />
+                )}
               </button>
             </div>
           </div>
+
+          {/* Mobile Menu */}
+          {isMobileMenuOpen && (
+            <div className="md:hidden mt-4 pb-4">
+              <div className="flex flex-col space-y-4">
+                {navigationItems.map((item) => (
+                  <button
+                    key={item.id}
+                    onClick={() => scrollToSection(item.id)}
+                    className={`text-left py-2 px-4 rounded-lg hover:text-cyan-400 hover:bg-cyan-400/10 transition-all duration-300 ${
+                      activeSection === item.id
+                        ? "text-cyan-400 bg-cyan-400/10"
+                        : ""
+                    }`}
+                  >
+                    {item.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
       {/* Hero Section */}
       <section
         id="home"
-        className="min-h-screen flex items-center justify-center relative z-10 pt-20"
+        className="min-h-screen flex items-center justify-center relative z-10 pt-24 md:pt-20"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
@@ -358,7 +409,7 @@ const Portfolio = () => {
               <div className="space-y-4">
                 <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
                   <span className="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    Full Stack
+                    Software
                   </span>
                   <br />
                   <span className="text-white">Developer</span>
@@ -435,7 +486,7 @@ const Portfolio = () => {
             </span>
           </h2>
           <p className="text-lg text-gray-300 leading-relaxed">
-            I'm a passionate full-stack developer with expertise in modern web
+            I'm a passionate Software Developer with expertise in modern web
             technologies, mobile development, and artificial intelligence. I
             love creating innovative solutions that bridge the gap between
             cutting-edge technology and user-friendly experiences. When I'm not
@@ -550,6 +601,75 @@ const Portfolio = () => {
         </div>
       </section>
 
+      {/* Certificates Section */}
+      <section id="certificates" className="py-16 md:py-20 relative z-10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-12 md:mb-16">
+            <span className="bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
+              Certifications
+            </span>
+          </h2>
+          <div className="grid sm:grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto">
+            {certificates.map((certificate, index) => (
+              <div
+                key={certificate.title}
+                className="bg-gradient-to-br from-gray-900/60 to-gray-800/40 backdrop-blur-sm rounded-xl overflow-hidden border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 group"
+              >
+                {/* Certificate Image */}
+                <div className="relative h-48 md:h-56 overflow-hidden">
+                  <img
+                    src={certificate.image}
+                    alt={certificate.title}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                  {certificate.verifyLink && (
+                    <div className="absolute top-4 right-4">
+                      <a
+                        href={certificate.verifyLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-3 py-1 bg-cyan-500/20 backdrop-blur-sm rounded-full text-cyan-400 hover:text-cyan-300 transition-colors text-xs border border-cyan-400/30"
+                      >
+                        Verify
+                      </a>
+                    </div>
+                  )}
+                  <div className="absolute bottom-4 left-4">
+                    <span className="px-3 py-1 bg-purple-500/20 backdrop-blur-sm rounded-full text-purple-300 text-xs border border-purple-400/30">
+                      {certificate.date}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Certificate Content */}
+                <div className="p-4 md:p-6">
+                  <h3 className="text-lg md:text-xl font-semibold mb-2 text-cyan-400">
+                    {certificate.title}
+                  </h3>
+                  <p className="text-purple-300 text-sm mb-3 font-medium">
+                    {certificate.issuer}
+                  </p>
+                  <p className="text-gray-300 mb-4 text-sm">
+                    {certificate.description}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {certificate.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="px-2 py-1 bg-cyan-600/30 rounded text-xs border border-cyan-500/30"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
       <section id="contact" className="py-20 relative z-10">
         <div className="max-w-4xl mx-auto px-6 text-center">
@@ -561,10 +681,12 @@ const Portfolio = () => {
           <p className="text-xl text-gray-300 mb-12">
             Ready to bring your ideas to life? Let's discuss your next project.
           </p>
-          <div className="flex justify-center space-x-8 mb-12">
+
+          {/* Mobile-First Contact Buttons */}
+          <div className="flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-6 mb-12">
             <a
               href="mailto:jatinsrivastava4104@gmail.com"
-              className="flex items-center space-x-3 px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform hover:scale-105"
+              className="flex items-center justify-center space-x-3 w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform hover:scale-105"
             >
               <Mail className="w-5 h-5" />
               <span>Email Me</span>
@@ -574,7 +696,7 @@ const Portfolio = () => {
               href="https://www.linkedin.com/in/jatin-srivastava-784223253"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-3 px-6 py-3 border border-cyan-500 rounded-full hover:bg-cyan-500/10 transition-all duration-300"
+              className="flex items-center justify-center space-x-3 w-full sm:w-auto px-6 py-3 border border-cyan-500 rounded-full hover:bg-cyan-500/10 transition-all duration-300"
             >
               <Linkedin className="w-5 h-5" />
               <span>LinkedIn</span>
@@ -584,7 +706,7 @@ const Portfolio = () => {
               href="https://github.com/JxTIN21"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center space-x-3 px-6 py-3 border border-purple-500 rounded-full hover:bg-purple-500/10 transition-all duration-300"
+              className="flex items-center justify-center space-x-3 w-full sm:w-auto px-6 py-3 border border-purple-500 rounded-full hover:bg-purple-500/10 transition-all duration-300"
             >
               <Github className="w-5 h-5" />
               <span>GitHub</span>
