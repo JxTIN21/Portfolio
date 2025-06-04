@@ -12,6 +12,7 @@ A modern, responsive portfolio website showcasing my skills, projects, and exper
 - **Skills Display**: Organized technical skills with category-based layout
 - **Contact Integration**: Direct links to email, LinkedIn, and GitHub
 - **Resume Download**: One-click resume download functionality
+- **Certificates Download**: One-click certificate download functionality
 
 ## 🛠️ Tech Stack
 
@@ -47,6 +48,7 @@ A modern, responsive portfolio website showcasing my skills, projects, and exper
    - Place your profile image at `/public/images/Me.png`
    - Add project images in `/public/images/` directory
    - Add your resume PDF at `/public/resume/Jatin_Srivastava_Resume.pdf`
+   - Add your certificate PDF at `/public/certificates/`
 
 4. **Start the development server**
    ```bash
@@ -68,11 +70,15 @@ portfolio/
 │   │   ├── Hospital.png
 │   │   ├── Agent.png
 │   │   ├── Headliner.png
-│   │   └── Spotify.png
+│   │   ├── Spotify.png
+│   │   ├── mern-certificate.jpg       
+│   │   └── android-certificate.jpg    
+│   ├── certificates/                  
+│   │   ├── Android.pdf                 
+│   │   └── MERN.pdf                    
 │   └── resume/
 │       └── Jatin_Srivastava_Resume.pdf
 ├── src/
-│   │   
 │   ├── App.js
 │   └── index.js
 └── README.md
@@ -135,7 +141,8 @@ Update the following sections in `Portfolio.js`:
 2. **About**: Brief personal description
 3. **Skills**: Technical skills organized by categories
 4. **Projects**: Featured projects with images and links
-5. **Contact**: Social links and contact information
+5. **Certificates**: Featured certifications and Courses
+6. **Contact**: Social links and contact information
 
 ## 🌐 Deployment
 
