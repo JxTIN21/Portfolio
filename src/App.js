@@ -28,21 +28,23 @@ const Portfolio = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, []);
 
-  // Scroll to section function
-  const scrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      const navHeight = 80; // Height of the fixed navbar
-      const elementPosition = element.offsetTop - navHeight;
+  // Improved scroll to section function
+const scrollToSection = (sectionId) => {
+  const element = document.getElementById(sectionId);
+  if (element) {
+    const navHeight = 80;
+    const elementPosition = element.getBoundingClientRect().top + window.pageYOffset - navHeight;
 
-      window.scrollTo({
-        top: elementPosition,
-        behavior: "smooth",
-      });
-      setActiveSection(sectionId);
-      setIsMobileMenuOpen(false); // Close mobile menu after navigation
-    }
-  };
+    // Immediately set active section when clicked
+    setActiveSection(sectionId);
+    setIsMobileMenuOpen(false);
+
+    window.scrollTo({
+      top: elementPosition,
+      behavior: "smooth",
+    });
+  }
+};
 
   // Resume download function
   const downloadResume = () => {
@@ -64,27 +66,56 @@ const Portfolio = () => {
     document.body.removeChild(link);
   };
 
-  // Scroll spy effect to update active section based on scroll position
-  useEffect(() => {
-    const handleScroll = () => {
-      const sections = ["home", "about", "skills", "projects", "contact"];
-      const navHeight = 80;
+  // Improved scroll spy effect with better contact section detection
+useEffect(() => {
+  const handleScroll = () => {
+    const sections = ["home", "about", "skills", "projects", "certificates", "contact"];
+    const navHeight = 100;
+    const scrollPosition = window.scrollY + navHeight;
+    const windowHeight = window.innerHeight;
+    const documentHeight = document.documentElement.scrollHeight;
+    
+    // Special case for contact section (last section)
+    if (scrollPosition + windowHeight >= documentHeight - 50) {
+      setActiveSection("contact");
+      return;
+    }
 
-      for (let i = sections.length - 1; i >= 0; i--) {
-        const section = document.getElementById(sections[i]);
-        if (section) {
-          const rect = section.getBoundingClientRect();
-          if (rect.top <= navHeight + 100) {
-            setActiveSection(sections[i]);
-            break;
-          }
+    for (let i = 0; i < sections.length; i++) {
+      const section = document.getElementById(sections[i]);
+      if (section) {
+        const sectionTop = section.offsetTop;
+        const sectionBottom = sectionTop + section.offsetHeight;
+        
+        // For contact section, make it active when we're close to it
+        if (sections[i] === "contact" && scrollPosition >= sectionTop - 200) {
+          setActiveSection("contact");
+          break;
+        }
+        // For other sections, use normal logic
+        else if (sections[i] !== "contact" && scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+          setActiveSection(sections[i]);
+          break;
         }
       }
-    };
+    }
+  };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  // Debounce scroll handler for better performance
+  let scrollTimeout;
+  const debouncedScrollHandler = () => {
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(handleScroll, 10);
+  };
+
+  window.addEventListener("scroll", debouncedScrollHandler);
+  handleScroll(); // Call once to set initial state
+  
+  return () => {
+    window.removeEventListener("scroll", debouncedScrollHandler);
+    clearTimeout(scrollTimeout);
+  };
+}, []);
 
   // Custom SVG Components
   const CodeSVG = () => (
@@ -331,163 +362,175 @@ const Portfolio = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-cyan-500/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent">
-              &lt;Jatin/&gt;
-            </div>
+<nav className="fixed top-0 w-full z-50 bg-black/80 backdrop-blur-md border-b border-cyan-500/30">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4">
+    <div className="flex justify-between items-center">
+      <div 
+        className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-500 bg-clip-text text-transparent cursor-pointer"
+        onClick={() => scrollToSection("home")}
+      >
+        &lt;Jatin/&gt;
+      </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex space-x-8">
-              {navigationItems.map((item) => (
-                <button
-                  key={item.id}
-                  onClick={() => scrollToSection(item.id)}
-                  className={`hover:text-cyan-400 transition-colors duration-300 relative group ${
-                    activeSection === item.id ? "text-cyan-400" : ""
-                  }`}
-                >
-                  {item.name}
-                  <div
-                    className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300 ${
-                      activeSection === item.id
-                        ? "w-full"
-                        : "w-0 group-hover:w-full"
-                    }`}
-                  ></div>
-                </button>
-              ))}
-            </div>
+      <div className="hidden md:flex space-x-8">
+        {navigationItems.map((item) => (
+          <button
+            key={item.id}
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToSection(item.id);
+            }}
+            className={`hover:text-cyan-400 transition-colors duration-300 relative group ${
+              activeSection === item.id ? "text-cyan-400" : ""
+            }`}
+          >
+            {item.name}
+            <div
+              className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-cyan-400 to-purple-500 transition-all duration-300 ${
+                activeSection === item.id
+                  ? "w-full"
+                  : "w-0 group-hover:w-full"
+              }`}
+            ></div>
+          </button>
+        ))}
+      </div>
 
             {/* Mobile Menu Button */}
-            <div className="md:hidden">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                className="text-cyan-400 hover:text-cyan-300 transition-colors p-2"
-              >
-                {isMobileMenuOpen ? (
-                  <X className="w-6 h-6" />
-                ) : (
-                  <Menu className="w-6 h-6" />
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Mobile Menu */}
-          {isMobileMenuOpen && (
-            <div className="md:hidden mt-4 pb-4">
-              <div className="flex flex-col space-y-4">
-                {navigationItems.map((item) => (
-                  <button
-                    key={item.id}
-                    onClick={() => scrollToSection(item.id)}
-                    className={`text-left py-2 px-4 rounded-lg hover:text-cyan-400 hover:bg-cyan-400/10 transition-all duration-300 ${
-                      activeSection === item.id
-                        ? "text-cyan-400 bg-cyan-400/10"
-                        : ""
-                    }`}
-                  >
-                    {item.name}
-                  </button>
-                ))}
-              </div>
-            </div>
+      <div className="md:hidden">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            setIsMobileMenuOpen(!isMobileMenuOpen);
+          }}
+          className="text-cyan-400 hover:text-cyan-300 transition-colors p-2"
+        >
+          {isMobileMenuOpen ? (
+            <X className="w-6 h-6" />
+          ) : (
+            <Menu className="w-6 h-6" />
           )}
+        </button>
+      </div>
+    </div>
+
+           {/* Mobile Menu */}
+    {isMobileMenuOpen && (
+      <div className="md:hidden mt-4 pb-4">
+        <div className="flex flex-col space-y-4">
+          {navigationItems.map((item) => (
+            <button
+              key={item.id}
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection(item.id);
+              }}
+              className={`text-left py-2 px-4 rounded-lg hover:text-cyan-400 hover:bg-cyan-400/10 transition-all duration-300 ${
+                activeSection === item.id
+                  ? "text-cyan-400 bg-cyan-400/10"
+                  : ""
+              }`}
+            >
+              {item.name}
+            </button>
+          ))}
         </div>
-      </nav>
+      </div>
+    )}
+  </div>
+</nav>
 
-      {/* Hero Section */}
-      <section
-        id="home"
-        className="min-h-screen flex items-center justify-center relative z-10 pt-24 md:pt-20"
-      >
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
-            {/* Left Content */}
-            <div className="flex-1 space-y-8 text-center lg:text-left">
-              {/* Name Introduction */}
-              <div className="space-y-2">
-                <p className="text-lg md:text-xl text-cyan-400 font-medium">
-                  Hi, I am
-                </p>
-                <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-                  Jatin Srivastava
-                </h2>
-              </div>
+{/* Hero Section */}
+<section
+  id="home"
+  className="min-h-screen flex items-center justify-center relative z-10 pt-32 sm:pt-24 md:pt-20"
+>
+  <div className="max-w-7xl mx-auto px-6">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12">
+      {/* Left Content */}
+      <div className="flex-1 space-y-8 text-center lg:text-left order-2 lg:order-1">
+        {/* Name Introduction */}
+        <div className="space-y-2">
+          <p className="text-lg md:text-xl text-cyan-400 font-medium">
+            Hi, I am
+          </p>
+          <h2 className="text-3xl md:text-5xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
+            Jatin Srivastava
+          </h2>
+        </div>
 
-              {/* Main Heading */}
-              <div className="space-y-4">
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
-                  <span className="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
-                    Software
-                  </span>
-                  <br />
-                  <span className="text-white">Developer</span>
-                </h1>
-                <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto lg:mx-0">
-                  Crafting digital experiences with MERN stack, Android
-                  development, and AI/ML technologies
-                </p>
-              </div>
+        {/* Main Heading */}
+        <div className="space-y-4">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight">
+            <span className="bg-gradient-to-r from-cyan-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Software
+            </span>
+            <br />
+            <span className="text-white">Developer</span>
+          </h1>
+          <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto lg:mx-0">
+            Crafting digital experiences with MERN stack, Android
+            development, and AI/ML technologies
+          </p>
+        </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                <button
-                  onClick={() => scrollToSection("projects")}
-                  className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform hover:scale-105"
-                >
-                  View Projects
-                </button>
-                <button
-                  onClick={downloadResume}
-                  className="flex items-center justify-center space-x-2 px-8 py-3 border border-cyan-500 rounded-full hover:bg-cyan-500/10 transition-all duration-300"
-                >
-                  <Download className="w-4 h-4" />
-                  <span>Download Resume</span>
-                </button>
-              </div>
+        {/* Action Buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+          <button
+            onClick={() => scrollToSection("projects")}
+            className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform hover:scale-105"
+          >
+            View Projects
+          </button>
+          <button
+            onClick={downloadResume}
+            className="flex items-center justify-center space-x-2 px-8 py-3 border border-cyan-500 rounded-full hover:bg-cyan-500/10 transition-all duration-300"
+          >
+            <Download className="w-4 h-4" />
+            <span>Download Resume</span>
+          </button>
+        </div>
+      </div>
+
+      {/* Right Side - Profile Picture with 3D Effect */}
+      <div className="flex-shrink-0 flex justify-center items-center order-1 lg:order-2 w-full lg:w-auto">
+        <div className="relative flex justify-center items-center">
+          {/* Gradient Background Shape - MOBILE RESPONSIVE */}
+          <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] transform rotate-12 hover:rotate-6 transition-transform duration-500">
+            <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-70 animate-pulse"></div>
+            <div className="absolute inset-2 bg-gradient-to-br from-cyan-500 via-purple-600 to-pink-600 rounded-3xl"></div>
+
+            {/* Floating Profile Image - MOBILE RESPONSIVE */}
+            <div className="absolute -top-6 -left-6 sm:-top-8 sm:-left-8 md:-top-10 md:-left-10 lg:-top-12 lg:-left-12 w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 transform -rotate-12 hover:-rotate-6 transition-transform duration-500">
+              <img
+                src="/images/Me.png"
+                alt="Jatin Srivastava"
+                className="w-full h-full object-cover rounded-2xl shadow-2xl border-4 border-white/20 hover:scale-105 transition-transform duration-300"
+              />
+              {/* Floating elements around image - MOBILE ADJUSTED */}
+              <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 md:-top-5 md:-right-5 lg:-top-6 lg:-right-6 w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 bg-cyan-400 rounded-full animate-bounce"></div>
+              <div className="absolute -bottom-3 -left-3 sm:-bottom-4 sm:-left-4 md:-bottom-5 md:-left-5 lg:-bottom-6 lg:-left-6 w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8 bg-purple-500 rounded-full animate-pulse"></div>
+              <div className="absolute top-1/2 -right-4 sm:-right-5 md:-right-7 lg:-right-8 w-4 h-4 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-pink-400 rounded-full animate-ping"></div>
             </div>
+          </div>
 
-            {/* Right Side - Profile Picture with 3D Effect */}
-            <div className="flex-shrink-0 flex justify-center items-center order-first lg:order-last">
-              <div className="relative">
-                {/* Gradient Background Shape - INCREASED SIZE */}
-                <div className="relative w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem] transform rotate-12 hover:rotate-6 transition-transform duration-500">
-                  <div className="absolute inset-0 bg-gradient-to-br from-cyan-400 via-purple-500 to-pink-500 rounded-3xl blur-xl opacity-70 animate-pulse"></div>
-                  <div className="absolute inset-2 bg-gradient-to-br from-cyan-500 via-purple-600 to-pink-600 rounded-3xl"></div>
-
-                  {/* Floating Profile Image - INCREASED SIZE */}
-                  <div className="absolute -top-8 -left-8 md:-top-10 md:-left-10 lg:-top-12 lg:-left-12 w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96 transform -rotate-12 hover:-rotate-6 transition-transform duration-500">
-                    <img
-                      src="/images/Me.png"
-                      alt="Jatin Srivastava"
-                      className="w-full h-full object-cover rounded-2xl shadow-2xl border-4 border-white/20 hover:scale-105 transition-transform duration-300"
-                    />
-                    {/* Floating elements around image - ADJUSTED POSITIONS */}
-                    <div className="absolute -top-4 -right-4 md:-top-5 md:-right-5 lg:-top-6 lg:-right-6 w-8 h-8 md:w-10 md:h-10 bg-cyan-400 rounded-full animate-bounce"></div>
-                    <div className="absolute -bottom-4 -left-4 md:-bottom-5 md:-left-5 lg:-bottom-6 lg:-left-6 w-6 h-6 md:w-8 md:h-8 bg-purple-500 rounded-full animate-pulse"></div>
-                    <div className="absolute top-1/2 -right-5 md:-right-7 lg:-right-8 w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-pink-400 rounded-full animate-ping"></div>
-                  </div>
-                </div>
-
-                {/* Additional floating SVG elements - ADJUSTED POSITIONS */}
-                <div className="absolute top-10 right-10 lg:top-12 lg:right-12 opacity-60 hidden md:block">
-                  <div className="w-24 h-24 lg:w-28 lg:h-28">
-                    <CodeSVG />
-                  </div>
-                </div>
-                <div className="absolute bottom-10 left-10 lg:bottom-12 lg:left-12 opacity-60 hidden md:block">
-                  <div className="w-20 h-20 lg:w-24 lg:h-24">
-                    <NetworkSVG />
-                  </div>
-                </div>
-              </div>
+          {/* Additional floating SVG elements - HIDDEN ON MOBILE */}
+          <div className="absolute top-10 right-10 lg:top-12 lg:right-12 opacity-60 hidden md:block">
+            <div className="w-24 h-24 lg:w-28 lg:h-28">
+              <CodeSVG />
+            </div>
+          </div>
+          <div className="absolute bottom-10 left-10 lg:bottom-12 lg:left-12 opacity-60 hidden md:block">
+            <div className="w-20 h-20 lg:w-24 lg:h-24">
+              <NetworkSVG />
             </div>
           </div>
         </div>
-      </section>
+      </div>
+    </div>
+  </div>
+</section>
 
       {/* About Section */}
       <section id="about" className="py-20 relative z-10">
