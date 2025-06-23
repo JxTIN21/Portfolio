@@ -256,6 +256,22 @@ useEffect(() => {
       image: "/images/Headliner.png",
     },
     {
+      title: "ResumeLens | AI-Powered Resume Analyzer",
+      description: "AI-powered resume analyzer that extracts skills, evaluates experience, scores readability, and provides improvement tips.",
+      tech: [
+        "Python",
+        "React.js",
+        "Flask",
+        "Flask-CORS",
+        "SQLite",
+        "PyJWT",
+        "spaCy",
+        "NLTK",
+      ],
+      github: "https://github.com/JxTIN21/ResumeLens",
+      image: "/images/resume.png",
+    },
+    {
       title: "Spotify Demo",
       description:
         "A Spotify-inspired website built with HTML, CSS, and JavaScript featuring 10 custom songs manually added for seamless playback and user experience",
@@ -640,7 +656,7 @@ useEffect(() => {
                     {project.description}
                   </p>
                   <div className="flex flex-wrap gap-2">
-                    {project.tech.map((tech) => (
+                    {Array.isArray(project.tech) && project.tech.map((tech) => (
                       <span
                         key={tech}
                         className="px-2 py-1 bg-purple-600/30 rounded text-xs border border-purple-500/30"
