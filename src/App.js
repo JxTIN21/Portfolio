@@ -269,6 +269,7 @@ useEffect(() => {
         "NLTK",
       ],
       github: "https://github.com/JxTIN21/ResumeLens",
+      live: "https://resumelens-8l0p.onrender.com/",
       image: "/images/resume.png",
     },
     {
