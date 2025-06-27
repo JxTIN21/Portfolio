@@ -273,6 +273,15 @@ useEffect(() => {
       image: "/images/resume.png",
     },
     {
+      title: "Portfolio Design",
+      description:
+        "A responsive portfolio-style website built with React.js to improve UI design skills, component structuring, and front-end development",
+      tech: ["React.js", "TailwindCSS", "Lucide React"],
+      github: "https://github.com/JxTIN21/Portfolio-Design",
+      live: "https://ephemeral-phoenix-13379f.netlify.app/",
+      image: "/images/port.png",
+    },
+    {
       title: "Spotify Demo",
       description:
         "A Spotify-inspired website built with HTML, CSS, and JavaScript featuring 10 custom songs manually added for seamless playback and user experience",
