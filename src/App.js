@@ -273,6 +273,21 @@ useEffect(() => {
       image: "/images/resume.png",
     },
     {
+      title: "BOOKIFY | A Book Review Service",
+      description: "Bookify is a full-stack web application where users can add books, write reviews, and explore community feedback. Built with React and FastAPI, it offers a smooth and responsive experience for book lovers.",
+      tech: [
+        "Python",
+        "FastAPI",
+        "PostgreSQL",
+        "JWT",
+        "React.js",
+        "Swagger UI",
+        "Redis",
+      ],
+      github: "https://github.com/JxTIN21/Book-Review-Service",
+      image: "/images/Bookify.png"
+    },
+    {
       title: "Portfolio Design",
       description:
         "A responsive portfolio-style website built with React.js to improve UI design skills, component structuring, and front-end development",
