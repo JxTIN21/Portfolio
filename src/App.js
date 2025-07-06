@@ -19,6 +19,7 @@ const Portfolio = () => {
   const [activeSection, setActiveSection] = useState("home");
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [visibleProjects, setVisibleProjects] = useState(6);
 
   useEffect(() => {
     const handleMouseMove = (e) => {
@@ -286,6 +287,20 @@ useEffect(() => {
       ],
       github: "https://github.com/JxTIN21/Book-Review-Service",
       image: "/images/Bookify.png"
+    },
+    {
+      title: "BlogSphere",
+      description: "BlogSphere is a full-stack blogging platform featuring user authentication, blog post creation and management, reviews, and email notifications for a seamless and interactive blogging experience.",
+      tech: [
+        "Python",
+        "SQLite",
+        "JWT",
+        "React.js",
+        "Flask-Mail"
+      ],
+      github: "https://github.com/JxTIN21/Blog",
+      live: "https://blogsphery.netlify.app/",
+      image: "/images/blog.png"
     },
     {
       title: "Portfolio Design",
@@ -637,7 +652,7 @@ useEffect(() => {
             </span>
           </h2>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {projects.map((project, index) => (
+            {projects.slice(0, visibleProjects).map((project, index) => (
               <div
                 key={project.title}
                 className="bg-gradient-to-br from-gray-900/60 to-gray-800/40 backdrop-blur-sm rounded-xl overflow-hidden border border-cyan-500/20 hover:border-cyan-400/40 transition-all duration-300 transform hover:scale-105 group"
@@ -694,6 +709,17 @@ useEffect(() => {
               </div>
             ))}
           </div>
+          {/* ADD THE LOAD MORE BUTTON HERE */}
+    {visibleProjects < projects.length && (
+      <div className="text-center mt-8">
+        <button
+          onClick={() => setVisibleProjects(projects.length)}
+          className="px-8 py-3 bg-gradient-to-r from-cyan-500 to-purple-600 rounded-full hover:from-cyan-400 hover:to-purple-500 transition-all duration-300 transform hover:scale-105"
+        >
+          Load More Projects
+        </button>
+      </div>
+    )}
         </div>
       </section>
 
