@@ -223,23 +223,6 @@ useEffect(() => {
 
   const projects = [
     {
-      title: "Hospital Appointment Booking",
-      description:
-        "A website to easily book and manage hospital appointments online",
-      tech: ["React.js", "Node.js", "MongoDB", "Express.js"],
-      github: "https://github.com/JxTIN21/Hospital-Appointment-Booking",
-      image: "/images/Hospital.png",
-    },
-    {
-      title: "Agent Management System",
-      description:
-        "A web app to manage agents, assign tasks, and track performance efficiently",
-      tech: ["React.js", "Express.js", "Node.js", "MongoDB"],
-      github: "https://github.com/JxTIN21/Agent-Management-System",
-      live: "https://agent-management-system.netlify.app/",
-      image: "/images/Agent.png",
-    },
-    {
       title: "Headliner | Title and Summary Generation",
       description:
         "An AI-powered app that generates and verifies article titles using advanced NLP models",
@@ -255,6 +238,31 @@ useEffect(() => {
       ],
       github: "https://github.com/JxTIN21/HEADLINER",
       image: "/images/Headliner.png",
+    },
+    {
+      title: "Codebase Search & Explainer",
+      description:
+        "A powerful web application that enables intelligent codebase exploration through natural language search and AI-powered explanations",
+      tech: ["React.js", "Python", "Flask", "ChromaDB", "Transformers", "Langchain", "Huggingface"],
+      github: "https://github.com/JxTIN21/Codebase",
+      image: "/images/Codebase.png",
+    },
+    {
+      title: "Agent Management System",
+      description:
+        "A web app to manage agents, assign tasks, and track performance efficiently",
+      tech: ["React.js", "Express.js", "Node.js", "MongoDB"],
+      github: "https://github.com/JxTIN21/Agent-Management-System",
+      live: "https://agent-management-system.netlify.app/",
+      image: "/images/Agent.png",
+    },
+    {
+      title: "Hospital Appointment Booking",
+      description:
+        "A website to easily book and manage hospital appointments online",
+      tech: ["React.js", "Node.js", "MongoDB", "Express.js"],
+      github: "https://github.com/JxTIN21/Hospital-Appointment-Booking",
+      image: "/images/Hospital.png",
     },
     {
       title: "ResumeLens | AI-Powered Resume Analyzer",
